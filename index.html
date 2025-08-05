@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS poster</title>
+    <!-- Bootstrap CSS for layout and basic styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Custom styles for the two-column layout */
+        body {
+            background-color: #f8f9fa; /* Light gray background */
+            font-family: 'Inter', sans-serif;
+            display: flex;
+        }
+        
+        .icon-sidebar, .sidebar {
+            background-color: #1a2232; /* Dark blue background */
+            color: #ffffff;
+            position: fixed;
+            top: 0;
+            padding-top: 1rem;
+            overflow-y: auto;
+        }
+
+        .icon-sidebar {
+            width: 70px;
+            height: 100vh;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .icon-sidebar .logo-section {
+            padding: 0.5rem 0;
+            margin-bottom: 1rem;
+        }
+        
+        .icon-sidebar .nav-link {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 0.5rem;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .icon-sidebar .nav-link:hover,
+        .icon-sidebar .nav-link.active {
+            color: #ffffff;
+            background-color: #344767;
+        }
+
+        .icon-sidebar .nav-link i {
+            font-size: 1.5rem;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            left: 70px; /* Position next to the icon sidebar */
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%); /* Initially hide the sidebar off-screen */
+            z-index: 9;
+        }
+
+        .sidebar.visible {
+            transform: translateX(0); /* Slide the sidebar into view */
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7); /* Lighter text color */
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0.25rem 0.5rem;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: #ffffff;
+            background-color: #344767; /* A lighter blue on hover/active */
+        }
+
+        .sidebar h5 {
+            color: #ffffff;
+            font-size: 1.2rem;
+            padding: 0 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-container {
+            position: relative;
+            margin: 0 1rem 1rem;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 0.5rem 2.5rem 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #344767;
+            background-color: #2b3952;
+            color: #ffffff;
+        }
+        
+        .search-container input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .search-container .bi-search {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .main-content-container {
+            margin-left: 70px; /* Initial margin to accommodate the icon sidebar */
+            flex-grow: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+        
+        .main-content-container.sidebar-visible {
+            margin-left: 320px; /* 70px + 250px */
+        }
+
+        .content-section {
+            display: none; /* Hide all content sections by default */
+        }
+        
+        .content-section.active {
+            display: block; /* Show the active content section */
+        }
+        
+        .field-card {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .field-card h5 {
+            font-size: 1rem;
+            color: #495057;
+        }
+        
+        .field-card p {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+
+<!-- First Column: Icon Sidebar -->
+<div class="icon-sidebar">
+    <div class="logo-section">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#fff" viewBox="0 0 16 16">
+            <path d="M6.347 6.643 5.952 5.253a.25.25 0 0 1 .462-.125L7.26 6.34l1.391-2.902a.25.25 0 0 1 .46.046l1.246 2.855 1.536-1.536a.25.25 0 0 1 .354 0L14.75 6.84a.25.25 0 0 1 0 .353l-1.536 1.536 2.855 1.246a.25.25 0 0 1 .046.46l-2.902 1.391 1.054 1.846a.25.25 0 0 1-.125.462l-1.39-1.054-1.537 1.536a.25.25 0 0 1-.354 0L6.84 14.75a.25.25 0 0 1-.353 0L4.95 13.214l-1.246 2.855a.25.25 0 0 1-.46-.046l-1.391-2.902-1.846 1.054a.25.25 0 0 1-.462-.125l1.054-1.39-1.536-1.537a.25.25 0 0 1 0-.354L1.25 6.84a.25.25 0 0 1 .353 0l1.536 1.536 2.855-1.246a.25.25 0 0 1 .046-.46zM8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+        </svg>
+    </div>
+    <ul class="nav flex-column flex-grow-1">
+        <li class="nav-item">
+            <a class="nav-link icon-link active" href="#" data-target="modules-content" data-title="Modules">
+                <i class="bi bi-app-indicator"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link icon-link" href="#" data-target="graph-content" data-title="Graph">
+                <i class="bi bi-bar-chart-line"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link icon-link" href="#" data-target="calendar-content" data-title="Calendar">
+                <i class="bi bi-calendar-date"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link icon-link" href="#" data-target="notifications-content" data-title="Notifications">
+                <i class="bi bi-bell"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link icon-link" href="#" data-target="settings-content" data-title="Settings">
+                <i class="bi bi-gear"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link icon-link" href="#" data-target="profile-content" data-title="Profile">
+                <i class="bi bi-person"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- Second Column: Text-based Sidebar (Initially hidden) -->
+<div class="sidebar">
+    <div class="p-3">
+        <h5 class="text-white" id="sidebarTitle">Modules</h5>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search...">
+            <i class="bi bi-search"></i>
+        </div>
+        <ul class="nav flex-column" id="moduleList">
+            <li class="nav-item">
+                <a class="nav-link text-link active" href="#" data-target="tasks-content">
+                    <i class="bi bi-list-task"></i> Tasks
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="meetings-content">
+                    <i class="bi bi-calendar-check"></i> Meetings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="calls-content">
+                    <i class="bi bi-telephone"></i> Calls
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="products-content">
+                    <i class="bi bi-box"></i> Products
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="quotes-content">
+                    <i class="bi bi-file-earmark-text"></i> Quotes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="sales-orders-content">
+                    <i class="bi bi-bag-check"></i> Sales Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="purchase-orders-content">
+                    <i class="bi bi-cart4"></i> Purchase Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="invoices-content">
+                    <i class="bi bi-receipt"></i> Invoices
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="salesinbox-content">
+                    <i class="bi bi-envelope"></i> SalesInbox
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="campaigns-content">
+                    <i class="bi bi-bullhorn"></i> Campaigns
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="vendors-content">
+                    <i class="bi bi-truck"></i> Vendors
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="price-books-content">
+                    <i class="bi bi-journal-text"></i> Price Books
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="cases-content">
+                    <i class="bi bi-briefcase"></i> Cases
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="solutions-content">
+                    <i class="bi bi-lightbulb"></i> Solutions
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="documents-content">
+                    <i class="bi bi-file-earmark"></i> Documents
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="forecasts-content">
+                    <i class="bi bi-graph-up"></i> Forecasts
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="visits-content">
+                    <i class="bi bi-person-walking"></i> Visits
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="social-content">
+                    <i class="bi bi-share-fill"></i> Social
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="services-content">
+                    <i class="bi bi-tools"></i> Services
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-link" href="#" data-target="projects-content">
+                    <i class="bi bi-kanban"></i> Projects
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Main Content Area -->
+<div class="main-content-container">
+    <div id="modules-content" class="content-section active">
+        <h2>Modules Dashboard</h2>
+        <p>This is the main dashboard content for the Modules section. You can view all available modules and their current status here.</p>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="field-card">
+                    <h5>Task Management</h5>
+                    <p>Manage your tasks, deadlines, and priorities in one place.</p>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="field-card">
+                    <h5>Meeting Scheduler</h5>
+                    <p>Schedule, manage, and track all your meetings.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- All other content sections will be dynamically populated by JS -->
+    <div id="content-area"></div>
+</div>
+
+<!-- Generic Modal for Add/Edit -->
+<div class="modal fade" id="genericCrudModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="crudForm">
+                    <input type="hidden" id="itemId">
+                    <!-- Form fields will be dynamically added here -->
+                    <div id="dynamicFormFields"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="saveItemBtn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper for modals and other components -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const iconLinks = document.querySelectorAll('.icon-link');
+        const textLinks = document.querySelectorAll('.text-link');
+        const contentSections = document.querySelectorAll('.content-section');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContentContainer = document.querySelector('.main-content-container');
+        const searchInput = document.getElementById('searchInput');
+        const moduleList = document.getElementById('moduleList');
+        const moduleItems = moduleList.querySelectorAll('.nav-item');
+        const sidebarTitle = document.getElementById('sidebarTitle');
+        const contentArea = document.getElementById('content-area');
+        const genericCrudModal = new bootstrap.Modal(document.getElementById('genericCrudModal'));
+        const crudForm = document.getElementById('crudForm');
+        const itemIdInput = document.getElementById('itemId');
+        const dynamicFormFields = document.getElementById('dynamicFormFields');
+
+        // A single object to hold all our in-memory data
+        const allData = {
+            tasks: [
+                { id: 1, title: 'Project Kick-off Meeting', description: 'Finalize project scope.', status: 'In Progress' },
+                { id: 2, title: 'Client Onboarding Documentation', description: 'Prepare and send welcome packet.', status: 'Pending' },
+            ],
+            meetings: [
+                { id: 1, topic: 'Q3 Planning Session', date: 'August 15, 2025', attendees: 'John, Sarah, Mark' },
+                { id: 2, topic: 'Client Follow-up', date: 'August 12, 2025', attendees: 'Jane Doe' },
+            ],
+            products: [
+                { id: 1, name: 'Product A', sku: 'P-101', price: '$1,200' },
+                { id: 2, name: 'Product B', sku: 'P-102', price: '$500' },
+            ],
+            quotes: [
+                { id: 1, client: 'Global Solutions Inc.', amount: '$5,000', status: 'Sent' }
+            ],
+            calls: [
+                { id: 1, topic: 'Call with ABC Corp', date: 'August 5, 2025', duration: '15 minutes' }
+            ],
+            'sales-orders': [
+                { id: 1, client: 'Tech Innovators', amount: '$7,500', status: 'Shipped' }
+            ],
+            'purchase-orders': [
+                { id: 1, vendor: 'Supply Chain Partners', amount: '$2,000', status: 'Received' }
+            ],
+            invoices: [
+                { id: 1, client: 'Acme Co.', amount: '$1,500', due_date: 'August 20, 2025', status: 'Unpaid' }
+            ],
+            salesinbox: [
+                { id: 1, client: 'New Inquiry from [Client Name]', subject: 'Request for more information on Product A' }
+            ],
+            campaigns: [
+                { id: 1, name: 'Summer Sale 2025', status: 'Active', leads_generated: '500+' }
+            ],
+            vendors: [
+                { id: 1, name: 'Supply Chain Partners', contact: 'Jane Smith', primary_products: 'Raw Materials' }
+            ],
+            'price-books': [
+                { id: 1, name: 'Standard Pricing', description: 'This is the default pricing for all customers.' }
+            ],
+            cases: [
+                { id: 1, client: 'Acme Co.', subject: 'Billing discrepancy', status: 'Open' }
+            ],
+            solutions: [
+                { id: 1, title: 'Guide to API Integration', description: 'A detailed guide on how to integrate with our REST API.' }
+            ],
+            documents: [
+                { id: 1, title: 'Q2 2025 Financial Report', last_updated: 'July 30, 2025' }
+            ],
+            forecasts: [
+                { id: 1, title: 'Sales Forecast Q3 2025', projected_revenue: '$500,000', status: 'On Track' }
+            ],
+            visits: [
+                { id: 1, client: 'ABC Corp.', date: 'August 4, 2025', description: 'Met with John Doe.' }
+            ],
+            social: [
+                { id: 1, platform: 'Twitter Mentions', mentions: '#YourCompany mentioned 3 times today.' }
+            ],
+            services: [
+                { id: 1, name: 'Managed IT Services', description: 'Comprehensive support for your IT infrastructure.' }
+            ],
+            projects: [
+                { id: 1, name: 'Website Redesign', status: '75% Complete', deadline: 'September 30, 2025' }
+            ],
+        };
+
+        // --- Core Functions for UI and Navigation ---
+        function showContent(targetId) {
+            iconLinks.forEach(item => item.classList.remove('active'));
+            textLinks.forEach(item => item.classList.remove('active'));
+            contentSections.forEach(section => section.classList.remove('active'));
+            contentArea.innerHTML = '';
+            
+            const correspondingIconLink = document.querySelector(`.icon-link[data-target="${targetId}"]`);
+            const correspondingTextLink = document.querySelector(`.text-link[data-target="${targetId}"]`);
+            
+            if (correspondingIconLink) {
+                correspondingIconLink.classList.add('active');
+            }
+            if (correspondingTextLink) {
+                correspondingTextLink.classList.add('active');
+            }
+
+            const targetContent = document.getElementById(targetId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            } else {
+                // If it's a dynamic CRUD page, render it here
+                const pageData = allData[targetId.replace('-content', '')];
+                if (pageData) {
+                    renderCrudPage(targetId.replace('-content', ''), pageData);
+                }
+            }
+        }
+
+        function renderCrudPage(pageKey, pageData) {
+            contentArea.classList.add('active');
+            const pageTitle = pageKey.charAt(0).toUpperCase() + pageKey.slice(1);
+            
+            let html = `
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>${pageTitle}</h2>
+                        <button class="btn btn-primary add-item-btn">
+                            <i class="bi bi-plus-lg"></i> Add New ${pageTitle.slice(0, -1)}
+                        </button>
+                    </div>
+                    <div class="row" id="pageItemsList">
+                        <!-- Items will be dynamically inserted here -->
+                    </div>
+                </div>
+            `;
+            contentArea.innerHTML = html;
+
+            const pageItemsList = document.getElementById('pageItemsList');
+            if (pageData.length === 0) {
+                pageItemsList.innerHTML = `<p class="text-muted fst-italic">No items found. Click "Add New ${pageTitle.slice(0, -1)}" to get started.</p>`;
+            } else {
+                pageData.forEach(item => {
+                    let cardContent = '';
+                    for (const [key, value] of Object.entries(item)) {
+                        if (key !== 'id') {
+                             cardContent += `<p class="card-text"><b class="text-capitalize">${key.replace(/_/g, ' ')}:</b> ${value}</p>`;
+                        }
+                    }
+                    pageItemsList.innerHTML += `
+                        <div class="col-md-6 col-lg-4 mb-4" data-id="${item.id}">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <div class="card-body">
+                                    ${cardContent}
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-outline-secondary edit-item-btn" data-id="${item.id}" data-page-key="${pageKey}">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger delete-item-btn" data-id="${item.id}" data-page-key="${pageKey}">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        // Initially show the 'modules-content' and activate the corresponding links
+        showContent('modules-content');
+        document.querySelector(`.text-link[data-target="tasks-content"]`).classList.add('active');
+        sidebar.classList.add('visible');
+        mainContentContainer.classList.add('sidebar-visible');
+
+        // Event listeners for the icon links
+        iconLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const title = this.getAttribute('data-title');
+                
+                showContent(targetId);
+                
+                if (title) {
+                    sidebarTitle.textContent = title;
+                }
+
+                if (targetId === 'modules-content') {
+                    sidebar.classList.add('visible');
+                    mainContentContainer.classList.add('sidebar-visible');
+                    textLinks.forEach(item => item.classList.remove('active'));
+                    document.querySelector(`.text-link[data-target="tasks-content"]`).classList.add('active');
+                } else {
+                    sidebar.classList.remove('visible');
+                    mainContentContainer.classList.remove('sidebar-visible');
+                }
+            });
+        });
+
+        // Event listeners for the text-based links
+        textLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('data-target');
+                const title = this.textContent.trim();
+                
+                showContent(targetId);
+                sidebarTitle.textContent = title;
+
+                sidebar.classList.add('visible');
+                mainContentContainer.classList.add('sidebar-visible');
+            });
+        });
+
+        // Event listener for the search input
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            moduleItems.forEach(item => {
+                const linkText = item.querySelector('.nav-link').textContent.toLowerCase();
+                if (linkText.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // --- CRUD Functions and Event Delegation ---
+
+        // Function to open the generic modal
+        function openCrudModal(pageKey, itemData = null) {
+            const pageTitle = pageKey.charAt(0).toUpperCase() + pageKey.slice(1);
+            const modalTitleElement = document.getElementById('modalTitle');
+            dynamicFormFields.innerHTML = '';
+            crudForm.reset();
+
+            if (itemData) {
+                // Edit existing item
+                modalTitleElement.textContent = `Edit ${pageTitle.slice(0, -1)}`;
+                itemIdInput.value = itemData.id;
+                for (const [key, value] of Object.entries(itemData)) {
+                    if (key !== 'id') {
+                        const inputHtml = `
+                            <div class="mb-3">
+                                <label for="${key}" class="form-label text-capitalize">${key.replace(/_/g, ' ')}</label>
+                                <input type="text" class="form-control" id="${key}" name="${key}" value="${value}" required>
+                            </div>
+                        `;
+                        dynamicFormFields.innerHTML += inputHtml;
+                    }
+                }
+            } else {
+                // Add new item
+                modalTitleElement.textContent = `Add New ${pageTitle.slice(0, -1)}`;
+                itemIdInput.value = '';
+                const sampleItem = allData[pageKey][0];
+                for (const key of Object.keys(sampleItem)) {
+                    if (key !== 'id') {
+                        const inputHtml = `
+                            <div class="mb-3">
+                                <label for="${key}" class="form-label text-capitalize">${key.replace(/_/g, ' ')}</label>
+                                <input type="text" class="form-control" id="${key}" name="${key}" required>
+                            </div>
+                        `;
+                        dynamicFormFields.innerHTML += inputHtml;
+                    }
+                }
+            }
+            genericCrudModal.show();
+        }
+
+        // Handle form submission for adding or editing
+        crudForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pageKey = sidebarTitle.textContent.toLowerCase();
+            const itemId = itemIdInput.value;
+            const updatedItem = {};
+            
+            // Collect form data
+            new FormData(crudForm).forEach((value, key) => {
+                updatedItem[key] = value;
+            });
+            
+            if (itemId) {
+                // Update existing item
+                allData[pageKey] = allData[pageKey].map(item =>
+                    item.id == itemId ? { ...item, ...updatedItem } : item
+                );
+            } else {
+                // Add new item
+                const newId = allData[pageKey].length > 0 ? Math.max(...allData[pageKey].map(t => t.id)) + 1 : 1;
+                allData[pageKey].push({ id: newId, ...updatedItem });
+            }
+
+            showContent(pageKey + '-content');
+            genericCrudModal.hide();
+        });
+
+        // Use event delegation for buttons on the dynamic content area
+        contentArea.addEventListener('click', function(e) {
+            const target = e.target.closest('button');
+            if (!target) return;
+            const pageKey = target.dataset.pageKey || sidebarTitle.textContent.toLowerCase();
+            const pageData = allData[pageKey];
+            const itemId = parseInt(target.dataset.id);
+
+            if (target.classList.contains('add-item-btn')) {
+                openCrudModal(pageKey);
+            } else if (target.classList.contains('edit-item-btn')) {
+                const itemToEdit = pageData.find(t => t.id === itemId);
+                if (itemToEdit) {
+                    openCrudModal(pageKey, itemToEdit);
+                }
+            } else if (target.classList.contains('delete-item-btn')) {
+                if (window.confirm(`Are you sure you want to delete this item?`)) {
+                    allData[pageKey] = pageData.filter(item => item.id !== itemId);
+                    showContent(pageKey + '-content');
+                }
+            }
+        });
+
+        // Initial render for the default page
+        renderCrudPage('tasks', allData.tasks);
+    });
+</script>
+
+</body>
+</html>
